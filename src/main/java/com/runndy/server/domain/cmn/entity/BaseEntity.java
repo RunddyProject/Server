@@ -23,23 +23,21 @@ public class BaseEntity {
   protected Long id;
 
   @Column
-  protected Boolean activated = true;
+  protected Boolean activated = true; // 활성화여부
 
   @CreationTimestamp
   @Column(updatable = false)
-  protected LocalDateTime createdAt;
+  protected LocalDateTime createdAt; // 생성일시
 
-  // UserID
   @Column(updatable = false)
-  protected Long createdBy;
+  protected Long createdBy; // 생성자
 
   @UpdateTimestamp
   @Column(insertable = false)
-  protected LocalDateTime updatedAt;
+  protected LocalDateTime updatedAt; // 수정일시
 
-  // UserID
   @Column(insertable = false)
-  protected Long updatedBy;
+  protected Long updatedBy; // 수정자
 
   public void inactivate() {
     this.activated = false;

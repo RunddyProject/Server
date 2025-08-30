@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,14 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
-  @Column
-  private String email;
+  @Column(nullable = false, unique = true)
+  private String email; // email
 
-  @Column(unique = true)
-  private String usrNm;
+  @Column(nullable = false, unique = true)
+  private String usrNm; // 유저명
 
-  @Column
+  @Column(nullable = false)
   @Enumerated(value = EnumType.STRING)
-  private SocialType sclTyp;
+  private SocialType sclTyp; // 소셜 로그인 타입
 }
 

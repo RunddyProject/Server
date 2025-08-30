@@ -43,6 +43,6 @@ public class Course extends BaseEntity {
   protected BigDecimal totEle; // 총 고저차(m)
 
   @Column
-  protected Long recomCnt; // 추천수
+  protected Long rcmCnt; // 추천수
 }
 

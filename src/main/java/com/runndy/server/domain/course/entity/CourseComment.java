@@ -25,5 +25,5 @@ public class CourseComment extends BaseEntity {
   protected Long cmtSeq; // 댓글순서
 
   @Column
-  protected String cnt; // 내용
+  protected String cont; // 내용
 }

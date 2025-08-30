@@ -24,11 +24,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Record extends BaseEntity {
 
-  @Column(name="usr_id", nullable = false)
-  protected Long usrId; // 유저 id
-
   @Column(name="crs_id", nullable = false)
   protected Long crsId; // 코스 id
+
+  @Column(name="usr_id", nullable = false)
+  protected Long usrId; // 유저 id
 
   @Column
   protected String recNm; // 기록 이름

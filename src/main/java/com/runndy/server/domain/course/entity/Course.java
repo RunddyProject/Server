@@ -3,8 +3,6 @@ package com.runndy.server.domain.course.entity;
 import com.runndy.server.domain.cmn.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
@@ -21,15 +19,13 @@ public class Course extends BaseEntity {
   protected String crsNm; // 코스 이름
 
   @Column(nullable = false)
-  protected CourseType crsTyp; // 코스 유형 (공식/비공식)
+  protected String crsTyp; // 코스 유형 (CourseType)
 
   @Column
-  @Enumerated(value = EnumType.STRING)
-  protected CourseEnvType crsEnvTyp; // 코스 환경 정보
+  protected String crsEnvTyp; // 코스 환경 정보 (CourseEnvType)
 
   @Column
-  @Enumerated(value = EnumType.STRING)
-  protected CourseShapeType crsShpTyp; // 코스 모양
+  protected String crsShpTyp; // 코스 모양 (CourseShapeType)
 
   @Column
   protected Integer crsGrd; // 코스 난이도

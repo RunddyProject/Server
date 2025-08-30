@@ -3,10 +3,7 @@ package com.runndy.server.domain.user.entity;
 import com.runndy.server.domain.cmn.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,6 @@ public class User extends BaseEntity {
   private String usrNm; // 유저명
 
   @Column(nullable = false)
-  @Enumerated(value = EnumType.STRING)
-  private SocialType sclTyp; // 소셜 로그인 타입
+  private String sclTyp; // 소셜 로그인 타입 (SocialType)
 }
 

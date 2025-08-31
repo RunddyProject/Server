@@ -29,9 +29,9 @@ public class Facility extends BaseEntity {
   @Column(name = "fclt_typ", nullable = false)
   protected String facilityType; // 코스 타입 (FacilityType)
 
-  @Column(name = "fcltYn", nullable = false)
+  @Column(name = "fclt_yn", nullable = false)
   protected Boolean facilityYn; // 시설유무
 
-  @Column(name = "fcltAddr")
+  @Column(name = "fclt_addr")
   protected String facilityAddress; // 시설 주소
 }

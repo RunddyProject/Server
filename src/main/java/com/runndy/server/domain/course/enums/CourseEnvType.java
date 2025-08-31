@@ -1,4 +1,4 @@
-package com.runndy.server.domain.course.entity;
+package com.runndy.server.domain.course.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

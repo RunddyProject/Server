@@ -1,6 +1,6 @@
 package com.runndy.server.domain.user.service.dto.request;
 
-import com.runndy.server.domain.user.entity.UserType;
+import com.runndy.server.domain.user.enums.UserType;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.runndy.server.security.oauth;
 
-import com.runndy.server.domain.user.entity.SocialType;
+import com.runndy.server.domain.user.enums.SocialType;
 import com.runndy.server.domain.user.service.UserService;
 import com.runndy.server.domain.user.service.dto.request.SelectLoginUserRequestDto;
 import com.runndy.server.domain.user.service.dto.response.SelectLoginUserResponseDto;

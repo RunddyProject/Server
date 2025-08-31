@@ -16,7 +16,6 @@ public record UserPrincipal(
     String email, String name, Collection<? extends GrantedAuthority> authorities
 ) implements OAuth2User, UserDetails {
 
-
   public static UserPrincipal of(SelectLoginUserResponseDto userDto) {
     List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userDto.getUserType()));
 

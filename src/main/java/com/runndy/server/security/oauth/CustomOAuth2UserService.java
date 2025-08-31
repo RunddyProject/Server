@@ -27,9 +27,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     String regId = req.getClientRegistration().getRegistrationId(); // kakao, naver
     Map<String, Object> attrs = oAuth2User.getAttributes();
 
-    String providerId = null;
-    String email = null;
-    String name = null;
+    String providerId;
+    String email;
+    String name;
+    String uid; // providerType + providerId
 
     var socialType = SocialType.valueOf(regId.toUpperCase());
 
@@ -43,6 +44,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         email = (String) account.get("email");
         name = profile != null ? (String) profile.get("nickname") : ("kakao_" + providerId);
       }
+
+      case NAVER -> {
+        Map<String, Object> response = (Map<String, Object>) attrs.get("response");
+        providerId = (String) response.get("id");
+        email = (String) response.get("email");
+        name = (String) response.get("name");
+      }
+
+      default -> throw new OAuth2AuthenticationException("Unsupported provider: " + regId);
     }
 
     // 유저 정보 조회

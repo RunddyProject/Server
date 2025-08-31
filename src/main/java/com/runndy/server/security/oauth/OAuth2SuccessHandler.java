@@ -28,8 +28,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth) throws IOException {
     UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
-    // TODO: 유저 조회 -> 회원가입 or 로그인
-
     String access = jwt.createAccessToken(user);
     String refresh = jwt.createRefreshToken(user);
 

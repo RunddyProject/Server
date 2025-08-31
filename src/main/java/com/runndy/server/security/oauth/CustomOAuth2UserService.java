@@ -30,7 +30,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     String providerId;
     String email;
     String name;
-    String uid; // providerType + providerId
 
     var socialType = SocialType.valueOf(regId.toUpperCase());
 

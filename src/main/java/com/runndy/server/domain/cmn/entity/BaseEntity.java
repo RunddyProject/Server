@@ -8,10 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import lombok.Getter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -27,20 +27,18 @@ public class BaseEntity {
   @Column
   protected Boolean activated = true; // 활성화여부
 
-  @CreationTimestamp
+  @CreatedDate
   @Column(updatable = false)
   protected LocalDateTime createdAt; // 생성일시
 
   @CreatedBy
-  @Column(updatable = false)
   protected Long createdBy; // 생성자
 
-  @UpdateTimestamp
+  @LastModifiedDate
   @Column(insertable = false)
   protected LocalDateTime updatedAt; // 수정일시
 
   @LastModifiedBy
-  @Column(insertable = false)
   protected Long updatedBy; // 수정자
 
   public void inactivate() {

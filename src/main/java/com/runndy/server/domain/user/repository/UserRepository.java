@@ -37,13 +37,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     , scl_typ
                     , scl_id
                     , usr_typ
-                    , activated)
+                    , activated
+                    , created_at
+                          )
             VALUES (:#{#req.email}
                   , :#{#req.userName}
                   , :#{#req.socialType}
                   , :#{#req.socialId}
                   , :#{#req.userType}
-                  , true)
+                  , true
+                  , NOW()
+                    )
       """,
       nativeQuery = true)
   int createUser(@Param("req") CreateUserRequestDto requestDto);

@@ -17,10 +17,13 @@ public class User extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String email; // email
 
-  @Column(nullable = false, unique = true)
-  private String usrNm; // 유저명
+  @Column(name = "usrNm", nullable = false, unique = true)
+  private String userName; // 유저명
 
-  @Column(nullable = false)
-  private String sclTyp; // 소셜 로그인 타입 (SocialType)
+  @Column(name = "sclTyp", nullable = false)
+  private String socialType; // 소셜 로그인 타입 (SocialType)
+
+  @Column(name = "usrType", nullable = false)
+  private String userType; // 유저 타입 (UserType)
 }
 

@@ -26,7 +26,7 @@ public class AuthController {
   public ResponseEntity<Map<String, String>> refresh(@CookieValue("refreshToken") String refresh) {
 
     // {accessToken, cookie}
-    Map<String, Object> refreshResult = authService.refresh(refresh);
+    Map<String, Object> refreshResult = authService.refreshToken(refresh);
 
     return ResponseEntity.ok()
                          .header(HttpHeaders.SET_COOKIE, refreshResult.get("cookie").toString())

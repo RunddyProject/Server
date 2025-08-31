@@ -28,19 +28,25 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth) throws IOException {
     UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
-    // TODO: 유저 조회 -> 회원가입 Or 로그인
+    // TODO: 유저 조회 -> 회원가입 or 로그인
 
     String access = jwt.createAccessToken(user);
     String refresh = jwt.createRefreshToken(user);
 
     Claims refreshClaims = jwt.parse(refresh).getBody();
-    String subject = refreshClaims.getSubject();
-    String jti = refreshClaims.getId();
+    String subject = refreshClaims.getSubject(); // 사용자 식별자 (provider:providerId)
+    String jti = refreshClaims.getId(); // 토큰 식별자 -> BlackList
     Duration ttl = Duration.between(Instant.now(), refreshClaims.getExpiration().toInstant());
     tokenStore.saveRefresh(subject, jti, ttl);
 
     ResponseCookie cookie = ResponseCookie.from("refreshToken", refresh)
-                                          .httpOnly(true).secure(true).path("/").maxAge(ttl).sameSite("Lax").build();
+                                          .httpOnly(true)
+                                          .secure(true)
+                                          .path("/")
+                                          .maxAge(ttl)
+                                          .sameSite("Lax")
+                                          .build();
+
     res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
     // TODO: Client로 redirect

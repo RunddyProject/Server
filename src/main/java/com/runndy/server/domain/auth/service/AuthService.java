@@ -10,22 +10,24 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
   private final JwtTokenProvider jwt;
   private final TokenStore tokenStore;
 
-  public AuthService(JwtTokenProvider jwt, TokenStore tokenStore) {
-    this.jwt = jwt;
-    this.tokenStore = tokenStore;
-  }
-
-  public Map<String, Object> refresh(String refresh) {
+  /**
+   * 리프레시 토큰으로 액세스 토큰 재발급
+   * @param refresh
+   * @return
+   */
+  public Map<String, Object> refreshToken(String refresh) {
     Jws<Claims> jws = jwt.parse(refresh);
     Claims c = jws.getBody();
     String subject = c.getSubject();

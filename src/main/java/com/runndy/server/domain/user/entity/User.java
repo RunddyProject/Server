@@ -26,7 +26,7 @@ public class User extends BaseEntity {
   @Column(name = "scl_id", nullable = false)
   private String socialId; // 소셜 제공자 ID
 
-  @Column(name = "usr_type", nullable = false)
+  @Column(name = "usr_typ", nullable = false)
   private String userType; // 유저 타입 (UserType)
 }
 

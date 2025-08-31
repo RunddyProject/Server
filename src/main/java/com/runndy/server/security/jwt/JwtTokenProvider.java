@@ -37,7 +37,6 @@ public class JwtTokenProvider {
                .setIssuer(issuer)
                .setSubject(user.getName()) // provider:providerId
                .claim("uid", user.getName())
-               .claim("email", user.email())
                .claim("roles",
                    user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                .setIssuedAt(Date.from(now))

@@ -15,15 +15,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseComment extends BaseEntity {
 
-  @Column
-  protected Long crsId; // 코스 id
+  @Column(name = "crs_id", nullable = false)
+  protected Long courseId; // 코스 id
 
-  @Column
-  protected Long usrId; // 유저 id
+  @Column(name = "usr_id", nullable = false)
+  protected Long userId; // 유저 id
 
-  @Column
-  protected Long cmtSeq; // 댓글순서
+  @Column(name = "cmt_seq", nullable = false)
+  protected Long commentSeq; // 댓글순서
 
-  @Column
-  protected String cnt; // 내용
+  @Column(name = "content")
+  protected String content; // 내용
 }

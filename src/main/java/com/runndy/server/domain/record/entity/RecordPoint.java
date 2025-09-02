@@ -26,21 +26,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecordPoint extends BaseEntity {
 
-  @Column(name ="rec_id", nullable = false)
-  protected Long recId; // 기록 id
+  @Column(name = "rec_id", nullable = false)
+  protected Long recordId; // 기록 id
 
-  @Column(name="pt_seq", nullable = false)
-  protected Long ptSeq; // 포인트 순서
+  @Column(name = "pt_seq", nullable = false)
+  protected Long pointSeq; // 포인트 순서
 
-  @Column
-  protected BigDecimal lat; // 위도
+  @Column(name = "lat")
+  protected BigDecimal latitude; // 위도
 
-  @Column
-  protected BigDecimal lon; // 경도
+  @Column(name = "lon")
+  protected BigDecimal longitude; // 경도
 
-  @Column
-  protected BigDecimal ele; // 고도
+  @Column(name = "ele")
+  protected BigDecimal elevation; // 고도
 
-  @Column
-  protected Timestamp tm; // 시간
+  @Column(name = "tm")
+  protected Timestamp time; // 시간
 }

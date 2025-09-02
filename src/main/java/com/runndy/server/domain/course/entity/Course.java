@@ -15,34 +15,34 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Course extends BaseEntity {
 
-  @Column(nullable = false)
-  protected String crsNm; // 코스 이름
+  @Column(name = "crs_nm", nullable = false)
+  protected String courseName; // 코스 이름
 
-  @Column(nullable = false)
-  protected String crsTyp; // 코스 유형 (CourseType)
+  @Column(name = "crs_typ", nullable = false)
+  protected String courseType; // 코스 유형 (CourseType)
 
-  @Column
-  protected String crsEnvTyp; // 코스 환경 정보 (CourseEnvType)
+  @Column(name = "crs_env_typ")
+  protected String courseEnvType; // 코스 환경 정보 (CourseEnvType)
 
-  @Column
-  protected String crsShpTyp; // 코스 모양 (CourseShapeType)
+  @Column(name = "crs_shp_typ")
+  protected String courseShapeType; // 코스 모양 (CourseShapeType)
 
-  @Column
-  protected Integer crsGrd; // 코스 난이도
+  @Column(name = "crs_grd")
+  protected Integer courseGrade; // 코스 난이도
 
-  @Column(nullable = false)
-  protected String strtAddr; // 시작 주소
+  @Column(name = "strt_addr", nullable = false)
+  protected String startAddress; // 시작 주소
 
-  @Column(nullable = false)
-  protected String endAddr; // 종료 주소
+  @Column(name = "end_addr", nullable = false)
+  protected String endAddress; // 종료 주소
 
-  @Column
-  protected BigDecimal totDist; // 총 거리(m)
+  @Column(name = "tot_dist")
+  protected BigDecimal totalDistance; // 총 거리(m)
 
-  @Column
-  protected BigDecimal totEle; // 총 고저차(m)
+  @Column(name = "tot_ele")
+  protected BigDecimal totalElevation; // 총 고저차(m)
 
-  @Column
-  protected Long recomCnt; // 추천수
+  @Column(name = "rcm_cnt")
+  protected Long recommendCount; // 추천수
 }
 

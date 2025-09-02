@@ -24,18 +24,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CoursePoint extends BaseEntity {
 
-  @Column(name="crs_id", nullable = false)
-  protected Long crsId; // 코스 id
+  @Column(name = "crs_id", nullable = false)
+  protected Long courseId; // 코스 id
 
-  @Column(name="pt_seq", nullable = false)
-  protected Long ptSeq; // 포인트 순서
+  @Column(name = "pt_seq", nullable = false)
+  protected Long pointSeq; // 포인트 순서
 
-  @Column(nullable = false)
-  protected BigDecimal lat; // 위도
+  @Column(name = "lat", nullable = false)
+  protected BigDecimal latitude; // 위도
 
-  @Column(nullable = false)
-  protected BigDecimal lon; // 경도
+  @Column(name = "lon", nullable = false)
+  protected BigDecimal longitude; // 경도
 
-  @Column
-  protected BigDecimal ele; // 고도
+  @Column(name = "ele")
+  protected BigDecimal elevation; // 고도
 }

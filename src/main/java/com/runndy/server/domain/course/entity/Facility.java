@@ -23,15 +23,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Facility extends BaseEntity {
 
-  @Column(name="crs_id", nullable = false)
-  protected Long crsId; // 코스 id
+  @Column(name = "crs_id", nullable = false)
+  protected Long courseId; // 코스 id
 
-  @Column(name="fclt_typ", nullable = false)
-  protected String fcltTyp; // 코스 타입 (FacilityType)
+  @Column(name = "fclt_typ", nullable = false)
+  protected String facilityType; // 코스 타입 (FacilityType)
 
-  @Column(nullable = false)
-  protected Boolean fcltYn; // 시설유무
+  @Column(name = "fclt_yn", nullable = false)
+  protected Boolean facilityYn; // 시설유무
 
-  @Column
-  protected String fcltAddr; // 시설 주소
+  @Column(name = "fclt_addr")
+  protected String facilityAddress; // 시설 주소
 }

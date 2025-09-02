@@ -4,23 +4,37 @@ import com.runndy.server.domain.cmn.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "users")
+@Table(name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uq_user_social",
+            columnNames = {"scl_typ", "scl_id"}
+        )
+    }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String email; // email
 
-  @Column(nullable = false, unique = true)
-  private String usrNm; // 유저명
+  @Column(name = "usr_nm", nullable = false)
+  private String userName; // 유저명
 
-  @Column(nullable = false)
-  private String sclTyp; // 소셜 로그인 타입 (SocialType)
+  @Column(name = "scl_typ", nullable = false)
+  private String socialType; // 소셜 로그인 타입 (SocialType)
+
+  @Column(name = "scl_id", nullable = false)
+  private String socialId; // 소셜 제공자 ID
+
+  @Column(name = "usr_typ", nullable = false)
+  private String userType; // 유저 타입 (UserType)
 }
 

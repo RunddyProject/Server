@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class SelectLoginUserResponseDto {
+public class SelectLoginUserResult {
 
   private String email;
   private String userName;

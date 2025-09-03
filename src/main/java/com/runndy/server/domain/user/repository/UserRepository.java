@@ -1,9 +1,9 @@
 package com.runndy.server.domain.user.repository;
 
 import com.runndy.server.domain.user.entity.User;
-import com.runndy.server.domain.user.repository.dto.request.CreateUserRequestDto;
-import com.runndy.server.domain.user.repository.dto.request.SelectLoginUserRequestDto;
-import com.runndy.server.domain.user.repository.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.repository.dto.request.CreateUserCommand;
+import com.runndy.server.domain.user.repository.dto.request.SelectLoginUserQuery;
+import com.runndy.server.domain.user.repository.dto.response.SelectLoginUserResult;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -27,8 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             AND activated = true
       """,
       nativeQuery = true)
-  Optional<SelectLoginUserResponseDto> findUserByEmailAndSocialType(
-      @Param("req") SelectLoginUserRequestDto requestDto);
+  Optional<SelectLoginUserResult> findUserByEmailAndSocialType(
+      @Param("req") SelectLoginUserQuery requestDto);
 
   @Modifying
   @Query(value = """
@@ -51,6 +51,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     )
       """,
       nativeQuery = true)
-  int createUser(@Param("req") CreateUserRequestDto requestDto);
+  int createUser(@Param("req") CreateUserCommand requestCommand);
 
 }

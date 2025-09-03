@@ -2,7 +2,7 @@ package com.runndy.server.domain.user.service.dto;
 
 import com.runndy.server.domain.user.enums.SocialType;
 import com.runndy.server.domain.user.enums.UserType;
-import com.runndy.server.domain.user.repository.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.repository.dto.response.SelectLoginUserResult;
 import lombok.Builder;
 import lombok.Data;
 
@@ -26,7 +26,7 @@ public class LoginUserInfoDto {
                            .build();
   }
 
-  public static LoginUserInfoDto from(SelectLoginUserResponseDto responseDto) {
+  public static LoginUserInfoDto from(SelectLoginUserResult responseDto) {
     return LoginUserInfoDto.builder()
                            .email(responseDto.getEmail())
                            .userName(responseDto.getUserName())

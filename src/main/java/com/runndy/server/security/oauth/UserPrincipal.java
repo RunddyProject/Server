@@ -1,6 +1,7 @@
 package com.runndy.server.security.oauth;
 
-import com.runndy.server.domain.user.service.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.enums.SocialType;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Builder
 public record UserPrincipal(
-    Long id, String provider, String providerId,
+    Long id, SocialType provider, String providerId,
     String email, String name, Collection<? extends GrantedAuthority> authorities
 ) implements OAuth2User, UserDetails {
 
-  public static UserPrincipal of(SelectLoginUserResponseDto userDto) {
-    List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userDto.getUserType()));
+  public static UserPrincipal of(LoginUserInfoDto userDto) {
+    List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userDto.getUserType().toString()));
 
     return UserPrincipal.builder()
                         .provider(userDto.getSocialType())
@@ -36,7 +37,7 @@ public record UserPrincipal(
 
   @Override
   public String getName() {
-    return provider + ":" + providerId;
+    return provider.toString() + ":" + providerId;
   }
 
   @Override

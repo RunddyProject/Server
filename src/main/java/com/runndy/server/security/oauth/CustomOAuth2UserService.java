@@ -2,8 +2,7 @@ package com.runndy.server.security.oauth;
 
 import com.runndy.server.domain.user.enums.SocialType;
 import com.runndy.server.domain.user.service.UserService;
-import com.runndy.server.domain.user.service.dto.request.SelectLoginUserRequestDto;
-import com.runndy.server.domain.user.service.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -55,11 +54,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     // 유저 정보 조회
-    SelectLoginUserRequestDto userRequestDto = SelectLoginUserRequestDto.of(
-        email, name, socialType.toString(), providerId
+    LoginUserInfoDto loginUserInfoDto = LoginUserInfoDto.of(
+        email, name, socialType, providerId
     );
 
-    SelectLoginUserResponseDto userDto = userService.getOrCreateUser(userRequestDto);
+    LoginUserInfoDto userDto = userService.getOrCreateUser(loginUserInfoDto);
 
     // TODO: 추후 관리자 분기처리
     return UserPrincipal.of(userDto);

@@ -1,9 +1,8 @@
 package com.runndy.server.domain.user.service.implement;
 
 import com.runndy.server.domain.user.repository.UserRepository;
-import com.runndy.server.domain.user.service.dto.request.CreateUserRequestDto;
-import com.runndy.server.domain.user.service.dto.request.SelectLoginUserRequestDto;
-import com.runndy.server.domain.user.service.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.repository.dto.request.CreateUserRequestDto;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +16,11 @@ public class UserManager {
   /**
    * 회원가입
    *
-   * @param loginUserRequestDto 로그인 요청 DTO
+   * @param loginUserInfoDto 로그인 요청 DTO
    * @return SelectLoginUserResponseDto 생성된 사용자 정보
    */
-  public SelectLoginUserResponseDto createUser(
-      SelectLoginUserRequestDto loginUserRequestDto) {
-    CreateUserRequestDto createUserRequestDto = CreateUserRequestDto.from(loginUserRequestDto);
+  public LoginUserInfoDto createUser(LoginUserInfoDto loginUserInfoDto) {
+    CreateUserRequestDto createUserRequestDto = CreateUserRequestDto.from(loginUserInfoDto);
 
     int inserted = userRepository.createUser(createUserRequestDto);
 
@@ -30,7 +28,7 @@ public class UserManager {
       throw new RuntimeException("User creation failed");
     }
 
-    return userReader.getUser(loginUserRequestDto)
+    return userReader.getUser(loginUserInfoDto)
                      .orElseThrow(
                          () -> new RuntimeException("User retrieval or creation failed"));
   }

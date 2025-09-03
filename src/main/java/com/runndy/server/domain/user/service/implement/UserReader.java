@@ -1,8 +1,8 @@
 package com.runndy.server.domain.user.service.implement;
 
 import com.runndy.server.domain.user.repository.UserRepository;
-import com.runndy.server.domain.user.service.dto.request.SelectLoginUserRequestDto;
-import com.runndy.server.domain.user.service.dto.response.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.repository.dto.request.SelectLoginUserRequestDto;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,11 +13,11 @@ public class UserReader {
 
   private final UserRepository userRepository;
 
-  public Optional<SelectLoginUserResponseDto> getUser(SelectLoginUserRequestDto requestDto) {
-    return userRepository.findUserByEmailAndSclTyp(
-        requestDto.getEmail(),
-        requestDto.getSocialType(),
-        requestDto.getSocialId()
-    );
+  public Optional<LoginUserInfoDto> getUser(LoginUserInfoDto loginUserInfoDto) {
+    SelectLoginUserRequestDto loginUserRequestDto =
+        SelectLoginUserRequestDto.from(loginUserInfoDto);
+
+    return userRepository.findUserByEmailAndSocialType(loginUserRequestDto)
+                         .map(LoginUserInfoDto::from);
   }
 }

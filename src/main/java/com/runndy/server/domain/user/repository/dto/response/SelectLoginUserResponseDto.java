@@ -1,4 +1,4 @@
-package com.runndy.server.domain.user.service.dto.response;
+package com.runndy.server.domain.user.repository.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

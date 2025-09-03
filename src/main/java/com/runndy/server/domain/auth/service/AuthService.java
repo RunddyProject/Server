@@ -1,5 +1,6 @@
 package com.runndy.server.domain.auth.service;
 
+import com.runndy.server.domain.user.enums.SocialType;
 import com.runndy.server.security.jwt.JwtTokenProvider;
 import com.runndy.server.security.jwt.TokenStore;
 import com.runndy.server.security.oauth.UserPrincipal;
@@ -24,6 +25,7 @@ public class AuthService {
 
   /**
    * 리프레시 토큰으로 액세스 토큰 재발급
+   *
    * @param refresh
    * @return
    */
@@ -38,7 +40,9 @@ public class AuthService {
     }
 
     // 새 토큰 발급 및 로테이션
-    UserPrincipal principal = new UserPrincipal(null, subject.split(":")[0], subject.split(":")[1],
+    SocialType socialType = SocialType.valueOf(subject.split(":")[0]);
+
+    UserPrincipal principal = new UserPrincipal(null, socialType, subject.split(":")[1],
         null, subject, List.of(new SimpleGrantedAuthority("ROLE_USER")));
     String newAccess = jwt.createAccessToken(principal);
     String newRefresh = jwt.createRefreshToken(principal);

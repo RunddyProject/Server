@@ -1,4 +1,4 @@
-package com.runndy.server.domain.user.service.dto.response;
+package com.runndy.server.domain.user.repository.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class SelectLoginUserResponseDto {
+public class SelectLoginUserResult {
 
   private String email;
   private String userName;

@@ -9,21 +9,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwt;
   private final TokenStore tokenStore;
-
-  public JwtAuthenticationFilter(JwtTokenProvider jwt, TokenStore tokenStore) {
-    this.jwt = jwt;
-    this.tokenStore = tokenStore;
-  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,

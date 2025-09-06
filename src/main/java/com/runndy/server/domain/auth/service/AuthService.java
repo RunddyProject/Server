@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -54,18 +53,20 @@ public class AuthService {
     return TokenDto.of(newAccess, newRefresh, ttl);
   }
 
-  public ResponseCookie logout(Optional<String> authHeader, String refresh) {
-    authHeader.filter(h -> h.startsWith("Bearer ")).ifPresent(h -> {
-      Claims c = jwt.parse(h.substring(7)).getBody();
-      Duration ttl = Duration.between(Instant.now(), c.getExpiration().toInstant());
-      tokenStore.blacklist(c.getId(), ttl);
-    });
+  public void logout(Optional<String> authHeader, String refresh) {
+    // 1) 액세스 블랙리스트
+    authHeader.filter(h -> h.startsWith("Bearer "))
+              .ifPresent(h -> {
+                Claims ac = jwt.parse(h.substring(7)).getBody();
+                Duration ttl = Duration.between(Instant.now(), ac.getExpiration().toInstant());
+
+                tokenStore.blacklistAccess(ac.getId(), ttl);
+              });
+
+    // 2) 세션 종료
     if (refresh != null) {
       Claims rc = jwt.parse(refresh).getBody();
-      String subject = rc.getSubject();
-      tokenStore.revokeAllRefresh(subject);
+      tokenStore.revokeSession(rc.getSubject(), (String) rc.get("sid"));
     }
-    return ResponseCookie.from("refreshToken", "").httpOnly(true).secure(true)
-                         .path("/").maxAge(0).build();
   }
 }

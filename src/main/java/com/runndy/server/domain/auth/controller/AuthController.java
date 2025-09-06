@@ -4,12 +4,14 @@ import com.runndy.server.domain.auth.controller.dto.CreateAccessTokenResponseDto
 import com.runndy.server.domain.auth.service.AuthService;
 import com.runndy.server.domain.auth.service.dto.TokenDto;
 
+import com.runndy.server.security.jwt.TokenStore;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -47,14 +49,26 @@ public class AuthController {
                              tokenDto.getAccessToken()));
   }
 
+  /**
+   * Logout
+   */
+  @PreAuthorize("isAuthenticated()")
   @PostMapping("/logout")
   public ResponseEntity<Void> logout(
       @RequestHeader(HttpHeaders.AUTHORIZATION) Optional<String> authHeader,
       @CookieValue(value = "refreshToken", required = false) String refresh) {
 
-    ResponseCookie expiredCookie = authService.logout(authHeader, refresh);
+    authService.logout(authHeader, refresh);
+    ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
+                                                 .httpOnly(true)
+                                                 .secure(true)
+                                                 .sameSite("Lax")
+                                                 .path("/")
+                                                 .maxAge(0)
+                                                 .build();
 
-    return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
+    return ResponseEntity.noContent()
+                         .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
                          .build();
   }
 }

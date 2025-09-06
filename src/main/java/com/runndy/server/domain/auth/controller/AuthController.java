@@ -4,14 +4,12 @@ import com.runndy.server.domain.auth.controller.dto.CreateAccessTokenResponseDto
 import com.runndy.server.domain.auth.service.AuthService;
 import com.runndy.server.domain.auth.service.dto.TokenDto;
 
-import com.runndy.server.security.jwt.TokenStore;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,7 +26,6 @@ public class AuthController {
   /**
    * Access token 재발급
    */
-  @PreAuthorize("isAuthenticated()")
   @PostMapping("/access-token")
   public ResponseEntity<CreateAccessTokenResponseDto> refresh(
       @CookieValue("refreshToken") String refresh) {

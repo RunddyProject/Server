@@ -38,7 +38,7 @@ public class AuthService {
     }
 
     // 새 토큰 발급 (sid 유지)
-    SocialType socialType = SocialType.valueOf(subject.split(":")[0]);
+    SocialType socialType = SocialType.valueOf(subject.split(":")[0].toUpperCase());
 
     UserPrincipal principal = new UserPrincipal(null, socialType, subject.split(":")[1],
         null, subject, List.of(new SimpleGrantedAuthority("ROLE_USER")));

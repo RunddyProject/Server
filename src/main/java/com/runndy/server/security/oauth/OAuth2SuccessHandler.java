@@ -51,7 +51,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // TODO: Client로 redirect
     String redirect = UriComponentsBuilder.fromUriString("/login/success")
-                                          .queryParam("accessToken", access).build().toUriString();
+                                          .build()
+                                          .toUriString();
 
     getRedirectStrategy().sendRedirect(req, res, redirect);
   }

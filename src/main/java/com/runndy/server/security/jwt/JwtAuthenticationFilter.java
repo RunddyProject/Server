@@ -37,15 +37,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Jws<Claims> jws = jwt.parse(token);
         Claims c = jws.getBody();
         String jti = c.getId();
-        if (!tokenStore.isBlacklisted(jti)) {
+
+        // 블랙리스트 확인
+        if (!tokenStore.isAccessBlacklisted(jti)) {
           String subject = c.getSubject(); // provider:providerId
-          //TODO: auths 타입 확인
+
+          @SuppressWarnings("unchecked")
           List<SimpleGrantedAuthority> auths = ((List<String>) c.get("roles")).stream()
                                                                               .map(
                                                                                   SimpleGrantedAuthority::new)
                                                                               .toList();
           UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(subject, null, auths);
+
           SecurityContextHolder.getContext().setAuthentication(authentication);
         }
       } catch (JwtException e) {

@@ -45,11 +45,12 @@ public class JwtTokenProvider {
                .compact();
   }
 
-  public String createRefreshToken(UserPrincipal user) {
+  public String createRefreshToken(UserPrincipal user, String sid) {
     Instant now = Instant.now();
     return Jwts.builder()
                .setIssuer(issuer)
                .setSubject(user.getName())
+               .claim("sid", sid) // ← 세션 ID
                .setIssuedAt(Date.from(now))
                .setExpiration(Date.from(now.plusSeconds(refreshSecs)))
                .setId(UUID.randomUUID().toString())

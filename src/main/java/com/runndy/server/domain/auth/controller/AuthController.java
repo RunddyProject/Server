@@ -1,7 +1,9 @@
 package com.runndy.server.domain.auth.controller;
 
+import com.runndy.server.domain.auth.controller.dto.CreateAccessTokenResponseDto;
 import com.runndy.server.domain.auth.service.AuthService;
-import java.util.Map;
+import com.runndy.server.domain.auth.service.dto.TokenDto;
+
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -21,16 +23,28 @@ public class AuthController {
 
   private final AuthService authService;
 
+  /**
+   * Access token 재발급
+   */
   @PreAuthorize("isAuthenticated()")
-  @PostMapping("/refresh")
-  public ResponseEntity<Map<String, String>> refresh(@CookieValue("refreshToken") String refresh) {
+  @PostMapping("/access-token")
+  public ResponseEntity<CreateAccessTokenResponseDto> refresh(
+      @CookieValue("refreshToken") String refresh) {
 
-    // {accessToken, cookie}
-    Map<String, Object> refreshResult = authService.refreshToken(refresh);
+    TokenDto tokenDto = authService.refreshToken(refresh);
+
+    ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
+                                          .httpOnly(true)
+                                          .secure(true)
+                                          .path("/")
+                                          .maxAge(tokenDto.getTtl())
+                                          .sameSite("Lax")
+                                          .build();
 
     return ResponseEntity.ok()
-                         .header(HttpHeaders.SET_COOKIE, refreshResult.get("cookie").toString())
-                         .body(Map.of("accessToken", refreshResult.get("accessToken").toString()));
+                         .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                         .body(CreateAccessTokenResponseDto.of(
+                             tokenDto.getAccessToken()));
   }
 
   @PostMapping("/logout")

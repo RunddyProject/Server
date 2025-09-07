@@ -1,0 +1,152 @@
+name: CICD
+
+on:
+  # ✅ develop, main 모두에서 트리거
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+# 작업들
+jobs:
+  # -------------------------
+  # 1) CI: 빌드/테스트 (모든 브랜치)
+  # -------------------------
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    #defaults:
+    #  run:
+    #    working-directory: runddy
+
+    steps:
+      - name: (1) Checkout
+        uses: actions/checkout@v4
+
+      - name: (2) Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      # application-dev.yml
+      - name: (3) Copy dev yml
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_DEV_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-dev.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      # application-jwt.yml
+      - name: (4) Copy jwt
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_JWT_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-jwt.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      # application-oauth.yml
+      - name: (5) Copy oauth
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_OAUTH_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-oauth.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      - name: (6) Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      # Gradle Build
+      - name: (7) Build with Gradle
+        run: |
+          ./gradlew clean
+          ./gradlew compileJava
+          ./gradlew build -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} --exclude-task test
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+
+      # -------------------------
+      # 2) 이미지 빌드 & GHCR 푸시
+      # -------------------------
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # docker hub 로그인
+      - name: Login docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # Docker Build하고 DockerHub에 Push
+      - name: Docker Build & Push to DockerHub
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+
+      # -------------------------
+      # 3) 배포
+      # -------------------------
+
+      # GitHub IP를 요청
+      - name: Get GitHub IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-region: ap-northeast-2
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+
+      # GitHub IP를 AWS에 추가
+      - name: Add GitHub IP to AWS
+        run: |
+          aws ec2 authorize-security-group-ingress \
+          --group-id ${{ secrets.AWS_SG_ID }} \
+          --protocol tcp \
+          --port 22 \
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      # docker-compose.yml 파일 EC2로 복사
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "./docker-compose.yml"
+          target: "./app"
+
+      - name: 2) 배포 — docker compose pull/up & prune
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd app
+            sudo docker compose down
+            sudo docker compose pull
+            sudo docker compose up -d
+            sudo docker image prune -f
+
+      # Security Group에서 Github IP를 삭제
+      - name: Remove Github IP From Security Group
+        run: |
+          aws ec2 revoke-security-group-ingress \
+          --group-id ${{ secrets.AWS_SG_ID }} \
+          --protocol tcp \
+          --port 22 \
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32

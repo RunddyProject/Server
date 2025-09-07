@@ -95,9 +95,9 @@ jobs:
       - name: Deploy on EC2 via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }}          # ex) ec2-13-125-247-30.ap-northeast-2.compute.amazonaws.com
-          username: ${{ secrets.SSH_USER }}      # ex) ec2-user
-          key: ${{ secrets.SSH_KEY }}            # PEM 전체 내용
+          host: ${{ secrets.SSH_HOST }}         
+          username: ${{ secrets.SSH_USER }}     
+          key: ${{ secrets.SSH_KEY }}           
           script: |
             set -e
             cd ${{ secrets.EC2_APP_PATH }}       # ex) /opt/runddy

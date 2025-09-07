@@ -70,12 +70,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: (3) Build & Tag
+      # ✅ OWNER/REPO를 소문자로 만들어 IMAGE 변수로 출력
+      - name: (3) Compute image name (lowercase) & short sha
+        id: vars
+        run: |
+          OWNER_LC=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend" >> $GITHUB_OUTPUT
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: (4) Build & Tag
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
           docker build -t $IMAGE:$SHORT_SHA -t $IMAGE:latest .
 
-      - name: (4) Push
+      - name: (5) Push
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
           docker push $IMAGE:$SHORT_SHA

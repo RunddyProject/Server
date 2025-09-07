@@ -18,9 +18,9 @@ jobs:
   build:
     name: Build & Test (develop)
     runs-on: ubuntu-latest  
-    defaults:
-      run:
-        working-directory: runmap
+    #defaults:
+    #  run:
+    #    working-directory: runddy
 
     steps:
       - name: Checkout
@@ -47,6 +47,8 @@ jobs:
           name: app-jar
           path: |
             build/libs/*.jar
+
+      
   #작업3: 배포 (ec2)
   deploy:
     needs: build
@@ -56,6 +58,10 @@ jobs:
         uses: docker/login-action@v3.3.0
         with:
           registry: ghcr.io
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          
           usernmae: ${{github.actor}}
           password: ${{secrets.GHCR_TOKEN}}
 

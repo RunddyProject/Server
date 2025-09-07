@@ -79,16 +79,16 @@ jobs:
           echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend" >> $GITHUB_OUTPUT
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: (4) Build & Tag
+      - name: Build & Tag
         run: |
-          SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
-          docker build -t $IMAGE:$SHORT_SHA -t $IMAGE:latest .
+          docker build \
+            -t ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.SHORT_SHA }} \
+            -t ${{ steps.vars.outputs.IMAGE }}:latest .
 
-      - name: (5) Push
+      - name: Push
         run: |
-          SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
-          docker push $IMAGE:$SHORT_SHA
-          docker push $IMAGE:latest
+          docker push ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.SHORT_SHA }}
+          docker push ${{ steps.vars.outputs.IMAGE }}:latest
 
   # -------------------------
   # 3) 배포 (main push만)

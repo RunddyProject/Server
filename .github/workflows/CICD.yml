@@ -105,22 +105,23 @@ jobs:
     
     env: 
       SPRING_PROFILES_ACTIVE: "prd"
+      
       JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       ACCESS_TTL: ${{ secrets.ACCESS_TTL }}
       REFRESH_TTL: ${{ secrets.REFRESH_TTL }}
+      
       KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
       KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+      
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-      DEV_DB_URL: ${{ secrets.DEV_DB_URL }}
-      DEV_DB_USER: ${{ secrets.DEV_DB_USER }}
-      DEV_DB_PASS: ${{ secrets.DEV_DB_PASS }}
-      PRD_DB_URL: ${{ secrets.PRD_DB_URL }}
-      PRD_DB_USER: ${{ secrets.PRD_DB_USER }}
-      PRD_DB_PASS: ${{ secrets.PRD_DB_PASS }}
-      DEV_REDIRECT_URI: ${{ secrets.DEV_REDIRECT_URI }}
-      PRD_REDIRECT_URI: ${{ secrets.PRD_REDIRECT_URI }}
+      
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
       IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-backend:latest
   
     steps:
@@ -224,18 +225,18 @@ jobs:
             cat > "$APP_PATH/config/application-dev.yml" <<'YAML'
             spring:
               datasource:
-                url: ${DEV_DB_URL}
-                username: ${DEV_DB_USER}
-                password: ${DEV_DB_PASS}
+                url: ${DB_URL}
+                username: ${DB_USER}
+                password: ${DB_PASS}
                 driver-class-name: com.mysql.cj.jdbc.Driver
             YAML
   
             cat > "$APP_PATH/config/application-prd.yml" <<'YAML'
             spring:
               datasource:
-                url: ${PRD_DB_URL}
-                username: ${PRD_DB_USER}
-                password: ${PRD_DB_PASS}
+                url: ${DB_URL}
+                username: ${DB_USER}
+                password: ${DB_PASS}
                 driver-class-name: com.mysql.cj.jdbc.Driver
             YAML
   

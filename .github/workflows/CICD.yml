@@ -129,7 +129,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           envs: SPRING_PROFILES_ACTIVE,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,DB_URL,DB_USER,DB_PASS,REDIRECT_URI,EC2_APP_PATH,GHCR_TOKEN  
-
           script: |
             set -euo pipefail
             APP_PATH="${EC2_APP_PATH}"
@@ -147,7 +146,7 @@ jobs:
           envs: EC2_APP_PATH
           script: |
             APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application.yml" <<'YAML'
+            cat > "$APP_PATH/config/application.yml" <<YAML
             spring:
               application:
                 name: Server
@@ -166,7 +165,7 @@ jobs:
           envs: EC2_APP_PATH,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL
           script: |
             APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-jwt.yml" <<'YAML'
+            cat > "$APP_PATH/config/application-jwt.yml" <<YAML
             jwt:
               issuer: ${JWT_ISSUER}
               secret: ${JWT_SECRET}
@@ -183,7 +182,7 @@ jobs:
           envs: EC2_APP_PATH,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,REDIRECT_URI
           script: |
             APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-oauth.yml" <<'YAML'
+            cat > "$APP_PATH/config/application-oauth.yml" <<YAML
             spring:
               security:
                 oauth2:
@@ -227,7 +226,7 @@ jobs:
           envs: EC2_APP_PATH,DB_URL,DB_USER,DB_PASS
           script: |
             APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-prd.yml" <<'YAML'
+            cat > "$APP_PATH/config/application-prd.yml" <<YAML
             spring:
               datasource:
                 url: ${DB_URL}

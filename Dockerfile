@@ -11,7 +11,7 @@ RUN ./gradlew --version || true
 COPY . .
 RUN ./gradlew clean bootJar --no-daemon
 # (디버그용) 빌드 산출물 확인 원하면 아래 주석 해제
-# RUN echo "== built JARs ==" && find . -type f -path "*/build/libs/*.jar" -print
+RUN echo "== built JARs ==" && find . -type f -path "*/build/libs/*.jar" -print
 
 # --- runtime stage ---
 FROM eclipse-temurin:17-jre-jammy
@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata \
  && rm -rf /var/lib/apt/lists/*
 
 # bootJar 산출물(app.jar) 복사
-COPY --from=build /app/build/libs/app.jar /app/app.jar
+COPY --from=build /app/build/libs/*.jar /app/app.jar
 
 ENV TZ=Asia/Seoul \
     JAVA_OPTS="-Xms256m -Xmx512m"

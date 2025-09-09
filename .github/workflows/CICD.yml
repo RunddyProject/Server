@@ -124,11 +124,14 @@ jobs:
     steps:
       - name: 1) EC2 접속 & 기본 준비 (경로/로그인)
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: SPRING_PROFILES_ACTIVE,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,DB_URL,DB_USER,DB_PASS,REDIRECT_URI,EC2_APP_PATH,GHCR_TOKEN  
+          envs: SPRING_PROFILES_ACTIVE,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,DB_URL,DB_USER,DB_PASS,REDIRECT_URI,EC2_APP_PATH,GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY  
           script: |
             set -euo pipefail
             APP_PATH="${EC2_APP_PATH}"

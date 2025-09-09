@@ -162,12 +162,13 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH,SPRING_PROFILES_ACTIVE
+          port: 22
+          envs: EC2_APP_PATH
           script: |
             set -euo pipefail
             APP_PATH="${EC2_APP_PATH}"
             cd "$APP_PATH"
-            export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}"
-            docker compose pull
-            docker compose up -d
-            docker image prune -f
+            sudo docker-compose down
+            sudo docker compose pull
+            sudo docker compose up -d
+            sudo docker image prune -f

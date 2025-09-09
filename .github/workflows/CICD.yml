@@ -31,22 +31,49 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: (3) Grant execute permission for Gradle
-        run: chmod +x ./gradlew      
+      # application-dev.yml
+      - name: (3) Copy dev yml
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_DEV_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-dev.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
 
-      - name: (4) Build (skip Test)
+      # application-jwt.yml
+      - name: (4) Copy jwt
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_JWT_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-jwt.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      # application-oauth.yml
+      - name: (5) Copy oauth
+        env:
+          DEV_SECRET: ${{ secrets.APPLICATION_OAUTH_YML }}
+          DEV_SECRET_DIR: src/main/resources
+          DEV_SECRET_DIR_FILE_NAME: application-oauth.yml
+        run: echo $DEV_SECRET | base64 --decode >> $DEV_SECRET_DIR/$DEV_SECRET_DIR_FILE_NAME
+
+      - name: (6) Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      # Gradle Build
+      - name: (7) Build with Gradle
         run: |
-          # ./gradlew clean build --no-daemon #테스트 포함
-          ./gradlew clean bootJar --no-daemon #실행 JAR만
+          ./gradlew clean
+          ./gradlew compileJava
+          ./gradlew build -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} --exclude-task test
+        env:
+          SPRING_PROFILES_ACTIVE: dev
 
-      - name: (5) Upload JAR
+      - name: (8) Upload JAR
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
           path: |
             build/libs/*.jar
-            
 
   # -------------------------
   # 2) 이미지 빌드 & GHCR 푸시 (main push만)
@@ -101,23 +128,7 @@ jobs:
     #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     env: 
-      SPRING_PROFILES_ACTIVE: "prd"
-      # ── JWT
-      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      ACCESS_TTL: ${{ secrets.ACCESS_TTL }}
-      REFRESH_TTL: ${{ secrets.REFRESH_TTL }}
-      # ── OAuth
-      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
-      NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-      NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-      # ── DB
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASS: ${{ secrets.DB_PASS }}
-      # ── INFRA
+      SPRING_PROFILES_ACTIVE: "dev"
       EC2_APP_PATH: ${{ secrets.EC2_APP_PATH }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       
@@ -131,7 +142,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: SPRING_PROFILES_ACTIVE,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,DB_URL,DB_USER,DB_PASS,REDIRECT_URI,EC2_APP_PATH,GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY  
+          envs: EC2_APP_PATH,GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY
           script: |
             set -euo pipefail
             APP_PATH="${EC2_APP_PATH}"
@@ -145,109 +156,7 @@ jobs:
             REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
             echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend:latest" > "$APP_PATH/.env"
   
-      - name: 2) YML 생성 — application.yml
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH
-          script: |
-            APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application.yml" <<YAML
-            spring:
-              application:
-                name: Server
-              profiles:
-                include:
-                  - jwt
-                  - oauth
-            YAML
-  
-      - name: 3) YML 생성 — application-jwt.yml
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH,JWT_ISSUER,JWT_SECRET,ACCESS_TTL,REFRESH_TTL
-          script: |
-            APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-jwt.yml" <<YAML
-            jwt:
-              issuer: ${JWT_ISSUER}
-              secret: ${JWT_SECRET}
-              access-token-seconds: ${ACCESS_TTL}
-              refresh-token-seconds: ${REFRESH_TTL}
-            YAML
-  
-      - name: 4) YML 생성 — application-oauth.yml
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH,KAKAO_CLIENT_ID,KAKAO_CLIENT_SECRET,NAVER_CLIENT_ID,NAVER_CLIENT_SECRET,REDIRECT_URI
-          script: |
-            APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-oauth.yml" <<YAML
-            spring:
-              security:
-                oauth2:
-                  client:
-                    registration:
-                      kakao:
-                        client-id: ${KAKAO_CLIENT_ID}
-                        client-secret: ${KAKAO_CLIENT_SECRET}
-                        client-authentication-method: client_secret_post
-                        authorization-grant-type: authorization_code
-                        redirect-uri: ${REDIRECT_URI}
-                        scope: [ profile_nickname, account_email ]
-                      naver:
-                        client-id: ${NAVER_CLIENT_ID}
-                        client-secret: ${NAVER_CLIENT_SECRET}
-                        client-authentication-method: client_secret_post
-                        authorization-grant-type: authorization_code
-                        redirect-uri: ${REDIRECT_URI}
-                        scope: [ name, email ]
-                        provider: naver
-                  provider:
-                    kakao:
-                      authorization-uri: https://kauth.kakao.com/oauth/authorize
-                      token-uri: https://kauth.kakao.com/oauth/token
-                      user-info-uri: https://kapi.kakao.com/v2/user/me
-                      user-info-authentication-method: header
-                      user-name-attribute: id
-                    naver:
-                      authorization-uri: https://nid.naver.com/oauth2.0/authorize
-                      token-uri: https://nid.naver.com/oauth2.0/token
-                      user-info-uri: https://openapi.naver.com/v1/nid/me
-                      user-name-attribute: response
-            YAML
-  
-      - name: 5) YML 생성/ application-prd.yml
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH,DB_URL,DB_USER,DB_PASS
-          script: |
-            APP_PATH="${EC2_APP_PATH}"
-            cat > "$APP_PATH/config/application-prd.yml" <<YAML
-            spring:
-              datasource:
-                url: ${DB_URL}
-                username: ${DB_USER}
-                password: ${DB_PASS}
-                driver-class-name: com.mysql.cj.jdbc.Driver
-              jpa:
-                hibernate:
-                  ddl-auto: validate
-                show-sql: false
-            YAML
-  
-      - name: 6) 배포 — docker compose pull/up & prune
+      - name: 2) 배포 — docker compose pull/up & prune
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}

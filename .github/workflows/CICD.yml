@@ -132,6 +132,11 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     steps:
+      - # GitHub IP를 요청
+      - name: Get GitHub IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -145,7 +150,7 @@ jobs:
           --group-id ${{ secrets.AWS_SG_ID }} \
           --protocol tcp \
           --port 22 \
-          --cidr ${{ steps.publicip.outputs.ip }}/32
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: 1) EC2 접속 & 기본 준비 (경로/로그인)
         uses: appleboy/ssh-action@v1.2.0
@@ -187,4 +192,4 @@ jobs:
           --group-id ${{ secrets.AWS_SG_ID }} \
           --protocol tcp \
           --port 22 \
-          --cidr ${{ steps.publicip.outputs.ip }}/32
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32

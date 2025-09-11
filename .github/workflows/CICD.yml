@@ -67,6 +67,14 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: dev
 
+      - name: (8) Upload JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: |
+            build/libs/*.jar
+
   # -------------------------
   # 2) 이미지 빌드 & GHCR 푸시 (main push만)
   # -------------------------

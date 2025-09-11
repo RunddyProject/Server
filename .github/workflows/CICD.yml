@@ -170,10 +170,10 @@ jobs:
             #docker login
             echo "${GHCR_TOKEN}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # ✅ 레포/오너를 소문자로 변환해 IMAGE 만들기 → .env에 저장
-            OWNER_LC=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
-            REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
-            echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend:latest" > "/.env"
+#            # ✅ 레포/오너를 소문자로 변환해 IMAGE 만들기 → .env에 저장
+#            OWNER_LC=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+#            REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+#            echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend:latest" > "/.env"
 
       - name: 2) 배포 — docker compose pull/up & prune
         uses: appleboy/ssh-action@v1.2.0

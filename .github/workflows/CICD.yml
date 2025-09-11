@@ -141,10 +141,10 @@ jobs:
       # GitHub IP를 AWS에 추가
       - name: Add GitHub IP to AWS
         run: |
-          aws ec2 authorize-security-group-ingress\
-          --group-id ${{ secrets.AWS_SG_ID }}\ 
-          --protocol tcp\
-          --port 22\
+          aws ec2 authorize-security-group-ingress \
+          --group-id ${{ secrets.AWS_SG_ID }} \ 
+          --protocol tcp \
+          --port 22 \
           --cidr ${{ steps.publicip.outputs.ip }}/32
 
       - name: 1) EC2 접속 & 기본 준비 (경로/로그인)
@@ -183,8 +183,8 @@ jobs:
       # Security Group에서 Github IP를 삭제
       - name: Remove Github IP From Security Group
         run: |
-          aws ec2 revoke-security-group-ingress\ 
-          --group-id ${{ secrets.AWS_SG_ID }}\
-          --protocol tcp\
-          --port 22\
+          aws ec2 revoke-security-group-ingress \
+          --group-id ${{ secrets.AWS_SG_ID }} \
+          --protocol tcp \
+          --port 22 \
           --cidr ${{ steps.publicip.outputs.ip }}/32

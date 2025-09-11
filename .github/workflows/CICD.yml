@@ -132,7 +132,7 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     steps:
-      - # GitHub IP를 요청
+      # GitHub IP를 요청
       - name: Get GitHub IP
         id: ip
         uses: haythem/public-ip@v1.3

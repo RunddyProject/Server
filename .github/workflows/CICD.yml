@@ -162,8 +162,11 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          port: 22
           envs: GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY
           script: |
+            cd $HOME
+            
             #docker login
             echo "${GHCR_TOKEN}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 

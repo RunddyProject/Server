@@ -115,60 +115,60 @@ jobs:
         run: |
           docker push ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.SHORT_SHA }}
           docker push ${{ steps.vars.outputs.IMAGE }}:latest
-
-  # -------------------------
-  # 3) 배포
-  # -------------------------
-  deploy:
-    name: CD - EC2 ▸ Deploy (SSH -> docker compose)
-    needs: docker-build-and-push
-    runs-on: ubuntu-latest
-    
-    # ✅ main 브랜치의 push에서만 배포
-    #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    env: 
-      SPRING_PROFILES_ACTIVE: "dev"
-      EC2_APP_PATH: ${{ secrets.EC2_APP_PATH }}
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      
-    steps:
-      - name: 1) EC2 접속 & 기본 준비 (경로/로그인)
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: EC2_APP_PATH,GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY
-          script: |
-            set -euo pipefail
-            APP_PATH="${EC2_APP_PATH}"
-            mkdir -p "$APP_PATH/config"
-
-            #docker login
-            echo "${GHCR_TOKEN}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # ✅ 레포/오너를 소문자로 변환해 IMAGE 만들기 → .env에 저장
-            OWNER_LC=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
-            REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
-            echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend:latest" > "$APP_PATH/.env"
-  
-      - name: 2) 배포 — docker compose pull/up & prune
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          envs: EC2_APP_PATH
-          script: |
-            set -euo pipefail
-            APP_PATH="${EC2_APP_PATH}"
-            cd "$APP_PATH"
-            sudo docker-compose down
-            sudo docker compose pull
-            sudo docker compose up -d
-            sudo docker image prune -f
+#
+#  # -------------------------
+#  # 3) 배포
+#  # -------------------------
+#  deploy:
+#    name: CD - EC2 ▸ Deploy (SSH -> docker compose)
+#    needs: docker-build-and-push
+#    runs-on: ubuntu-latest
+#
+#    # ✅ main 브랜치의 push에서만 배포
+#    #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#
+#    env:
+#      SPRING_PROFILES_ACTIVE: "dev"
+#      EC2_APP_PATH: ${{ secrets.EC2_APP_PATH }}
+#      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+#
+#    steps:
+#      - name: 1) EC2 접속 & 기본 준비 (경로/로그인)
+#        uses: appleboy/ssh-action@v1.2.0
+#        env:
+#          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+#          GITHUB_REPOSITORY: ${{ github.repository }}
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          envs: EC2_APP_PATH,GHCR_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY
+#          script: |
+#            set -euo pipefail
+#            APP_PATH="${EC2_APP_PATH}"
+#            mkdir -p "$APP_PATH/config"
+#
+#            #docker login
+#            echo "${GHCR_TOKEN}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+#
+#            # ✅ 레포/오너를 소문자로 변환해 IMAGE 만들기 → .env에 저장
+#            OWNER_LC=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+#            REPO_LC=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+#            echo "IMAGE=ghcr.io/${OWNER_LC}/${REPO_LC}-backend:latest" > "$APP_PATH/.env"
+#
+#      - name: 2) 배포 — docker compose pull/up & prune
+#        uses: appleboy/ssh-action@v1.2.0
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          port: 22
+#          envs: EC2_APP_PATH
+#          script: |
+#            set -euo pipefail
+#            APP_PATH="${EC2_APP_PATH}"
+#            cd "$APP_PATH"
+#            sudo docker-compose down
+#            sudo docker compose pull
+#            sudo docker compose up -d
+#            sudo docker image prune -f

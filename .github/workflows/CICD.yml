@@ -131,7 +131,7 @@ jobs:
       # GitHub IP를 AWS에 추가
       - name: Add GitHub IP to AWS
         run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol |
           tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32 -- region ap-northeast-2
 
       - name: 1) EC2 접속 & 기본 준비 (경로/로그인)

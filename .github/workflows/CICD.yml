@@ -71,18 +71,9 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: dev
 
-  # -------------------------
-  # 2) 이미지 빌드 & GHCR 푸시 (main push만)
-  # -------------------------
-  docker-build-and-push:
-    name: CD — Build & Push Docker Image
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: (1) Checkout
-        uses: actions/checkout@v4
-
+      # -------------------------
+      # 2) 이미지 빌드 & GHCR 푸시
+      # -------------------------
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -102,15 +93,10 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
 
-  # -------------------------
-  # 3) 배포
-  # -------------------------
-  deploy:
-    name: CD - EC2 ▸ Deploy (SSH -> docker compose)
-    needs: docker-build-and-push
-    runs-on: ubuntu-latest
+      # -------------------------
+      # 3) 배포
+      # -------------------------
 
-    steps:
       # GitHub IP를 요청
       - name: Get GitHub IP
         id: ip

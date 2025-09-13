@@ -1,9 +1,12 @@
 package com.runndy.server.domain.healthCheck.controller;
 
-import com.runndy.server.domain.healthCheck.api.HealthCheckApi;
+import com.runndy.server.domain.healthCheck.controller.api.HealthCheckApi;
+import com.runndy.server.domain.healthCheck.controller.dto.SelectLoginUserResponseDto;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +23,10 @@ public class HealthCheckController implements HealthCheckApi {
 
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/auth")
-  public ResponseEntity<String> healthCheckWithAuth() {
-    return ResponseEntity.ok("auth pong");
+  public ResponseEntity<SelectLoginUserResponseDto> healthCheckWithAuth(
+      @AuthenticationPrincipal LoginUserInfoDto loginUserInfoDto) {
+    SelectLoginUserResponseDto response = SelectLoginUserResponseDto.from(loginUserInfoDto);
+    return ResponseEntity.ok()
+                         .body(response);
   }
 }

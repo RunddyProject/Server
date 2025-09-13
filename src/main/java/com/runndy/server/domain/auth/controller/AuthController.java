@@ -5,7 +5,6 @@ import com.runndy.server.domain.auth.controller.dto.CreateAccessTokenResponseDto
 import com.runndy.server.domain.auth.service.AuthService;
 import com.runndy.server.domain.auth.service.dto.TokenDto;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

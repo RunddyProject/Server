@@ -23,14 +23,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
     OAuth2User oAuth2User = delegate.loadUser(req);
 
-    String regId = req.getClientRegistration().getRegistrationId(); // kakao, naver
+    String regId = req.getClientRegistration().getRegistrationId().toUpperCase(); // KAKAO, NAVER
     Map<String, Object> attrs = oAuth2User.getAttributes();
 
     String providerId;
     String email;
     String name;
 
-    var socialType = SocialType.valueOf(regId.toUpperCase());
+    var socialType = SocialType.valueOf(regId);
 
     switch (socialType) {
       case KAKAO -> {
@@ -40,7 +40,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             account != null ? (Map<String, Object>) account.get("profile") : null;
 
         email = (String) account.get("email");
-        name = profile != null ? (String) profile.get("nickname") : ("kakao_" + providerId);
+        name = profile != null ? (String) profile.get("nickname") :
+            (SocialType.KAKAO+ providerId);
       }
 
       case NAVER -> {

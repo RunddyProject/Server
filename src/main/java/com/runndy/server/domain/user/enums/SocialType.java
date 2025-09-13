@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SocialType {
-  NAVER("naver"),
-  KAKAO("kakao")
+  NAVER("NAVER"),
+  KAKAO("KAKAO")
   ;
 
   private final String label;

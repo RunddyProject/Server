@@ -30,6 +30,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<SelectLoginUserResult> findUserByEmailAndSocialType(
       @Param("req") SelectLoginUserQuery requestDto);
 
+  @Query(value = """
+         SELECT email
+              , usr_nm AS userName
+              , scl_typ AS socialType
+              , scl_id AS socialId
+              , usr_typ AS userType
+           FROM users
+          WHERE scl_typ = :#{#req.socialType}
+            AND scl_id = :#{#req.socialId}
+            AND activated = true
+      """,
+      nativeQuery = true)
+  Optional<SelectLoginUserResult> getUserBySocialIdAndSocialType(
+      @Param("req") SelectLoginUserQuery requestDto);
+
+
   @Modifying
   @Query(value = """
       INSERT INTO users (

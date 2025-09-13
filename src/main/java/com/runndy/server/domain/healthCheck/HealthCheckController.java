@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health")
 public class HealthCheckController {
 
-  @PreAuthorize("isAuthenticated()")
   @GetMapping
   public ResponseEntity<String> healthCheck() {
     return ResponseEntity.ok("pong");
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/auth")
+  public ResponseEntity<String> auhtHealthCheck() {
+    return ResponseEntity.ok("auth pong");
   }
 }

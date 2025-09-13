@@ -1,8 +1,0 @@
-.git
-.github
-.gradle
-out
-*.iml
-*.log
-**/node_modules
-**/.DS_Store

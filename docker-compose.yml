@@ -2,7 +2,7 @@ services:
   springboot:
     image: runddy/runddy_dev:latest
     ports:
-      - 8080:8080
+      - 127.0.0.1:8080:8080
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     networks:

@@ -4,6 +4,7 @@ package com.runndy.server.error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,6 +20,18 @@ public class GlobalExceptionHandler {
                                                .build();
 
     return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
+  }
+
+  // Login required
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  ResponseEntity<ErrorResponse> handleForbiddenException(Exception ex) {
+    log.error("Exception {}", ex.getMessage());
+    ErrorResponse errorResponse = ErrorResponse.builder()
+                                               .message(HttpStatus.UNAUTHORIZED.toString())
+                                               .devMsg(ex.getMessage())
+                                               .build();
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(Exception.class)

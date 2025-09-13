@@ -1,5 +1,8 @@
 package com.runndy.server.security.jwt;
 
+import com.runndy.server.domain.user.enums.SocialType;
+import com.runndy.server.domain.user.service.UserService;
+import com.runndy.server.domain.user.service.dto.LoginUserInfoDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -21,6 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwt;
   private final TokenStore tokenStore;
+  private final UserService userService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
@@ -38,14 +42,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 블랙리스트 확인
         if (!tokenStore.isAccessBlacklisted(jti)) {
           String subject = c.getSubject(); // provider:providerId
+          String provider = subject.split(":")[0];
+          String providerId = subject.split(":")[1];
+
+          LoginUserInfoDto subjectDto = LoginUserInfoDto.of(SocialType.valueOf(provider.toUpperCase()),
+              providerId);
+          LoginUserInfoDto loginUserInfoDto = userService.getLoginUser(subjectDto);
 
           @SuppressWarnings("unchecked")
           List<SimpleGrantedAuthority> auths = ((List<String>) c.get("roles")).stream()
                                                                               .map(
                                                                                   SimpleGrantedAuthority::new)
                                                                               .toList();
+
           UsernamePasswordAuthenticationToken authentication =
-              new UsernamePasswordAuthenticationToken(subject, null, auths);
+              new UsernamePasswordAuthenticationToken(loginUserInfoDto, null, auths);
 
           SecurityContextHolder.getContext().setAuthentication(authentication);
         }

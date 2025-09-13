@@ -1,5 +1,6 @@
 package com.runndy.server.config;
 
+import com.runndy.server.domain.user.service.UserService;
 import com.runndy.server.security.jwt.JwtAuthenticationFilter;
 import com.runndy.server.security.jwt.JwtTokenProvider;
 import com.runndy.server.security.jwt.TokenStore;
@@ -56,7 +57,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwt, TokenStore store) {
-    return new JwtAuthenticationFilter(jwt, store);
+  public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwt, TokenStore store, UserService userService) {
+    return new JwtAuthenticationFilter(jwt, store, userService);
   }
 }

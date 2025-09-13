@@ -16,6 +16,13 @@ public class LoginUserInfoDto {
   private String socialId;
   private UserType userType;
 
+  public static LoginUserInfoDto of(SocialType socialType, String socialId) {
+    return LoginUserInfoDto.builder()
+                           .socialType(socialType)
+                           .socialId(socialId)
+                           .build();
+  }
+
   public static LoginUserInfoDto of(String email, String userName, SocialType socialType,
       String socialId) {
     return LoginUserInfoDto.builder()

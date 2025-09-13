@@ -28,7 +28,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
     String sid = "web-" + UUID.randomUUID();                // 디바이스/세션 식별자
-    String access = jwt.createAccessToken(user);
     String refresh = jwt.createRefreshToken(user, sid);
 
     Claims refreshClaims = jwt.parse(refresh).getBody();

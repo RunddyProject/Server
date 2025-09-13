@@ -1,6 +1,6 @@
 package com.runndy.server.domain.healthCheck.controller;
 
-import com.runndy.server.domain.healthCheck.doc.HealthCheckApi;
+import com.runndy.server.domain.healthCheck.api.HealthCheckApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,9 +1,11 @@
 package com.runndy.server.domain.auth.controller;
 
+import com.runndy.server.domain.auth.controller.api.AuthApi;
 import com.runndy.server.domain.auth.controller.dto.CreateAccessTokenResponseDto;
 import com.runndy.server.domain.auth.service.AuthService;
 import com.runndy.server.domain.auth.service.dto.TokenDto;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthApi {
 
   private final AuthService authService;
 
@@ -28,9 +30,9 @@ public class AuthController {
    */
   @PostMapping("/access-token")
   public ResponseEntity<CreateAccessTokenResponseDto> refresh(
-      @CookieValue("refreshToken") String refresh) {
+      @CookieValue("refreshToken") String refreshToken) {
 
-    TokenDto tokenDto = authService.refreshToken(refresh);
+    TokenDto tokenDto = authService.refreshToken(refreshToken);
 
     ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
                                           .httpOnly(true)
@@ -53,7 +55,7 @@ public class AuthController {
   @PostMapping("/logout")
   public ResponseEntity<Void> logout(
       @RequestHeader(HttpHeaders.AUTHORIZATION) Optional<String> authHeader,
-      @CookieValue(value = "refreshToken", required = false) String refresh) {
+      @CookieValue(value = "refreshToken") String refresh) {
 
     authService.logout(authHeader, refresh);
     ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")

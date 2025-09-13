@@ -27,11 +27,11 @@ public class GlobalExceptionHandler {
   ResponseEntity<ErrorResponse> handleForbiddenException(Exception ex) {
     log.error("Exception {}", ex.getMessage());
     ErrorResponse errorResponse = ErrorResponse.builder()
-                                               .message(HttpStatus.FORBIDDEN.toString())
+                                               .message(HttpStatus.UNAUTHORIZED.toString())
                                                .devMsg(ex.getMessage())
                                                .build();
 
-    return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(Exception.class)

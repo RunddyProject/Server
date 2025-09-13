@@ -9,11 +9,9 @@ import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class SwaggerConfig implements WebMvcConfigurer {
+public class SwaggerConfig {
 
   private static final String BEARER_TOKEN_PREFIX = "Bearer";
 
@@ -45,18 +43,11 @@ public class SwaggerConfig implements WebMvcConfigurer {
     return new Info()
         .title("Runddy API Docs") // API의 제목
         .description("""
-            <a href = "https://api.runddy.co.kr/oauth2/authorization/kakao" target="blank"> 카카오 로그인 </a> <br>
-            <a href = "https://api.runddy.co.kr/oauth2/authorization/google" target="blank"> 구글 로그인 </a>
+            <a href = "https://api.runddy.co.kr/oauth2/authorization/kakao" target="blank"> API 서버 카카오 로그인 </a> <br>
+            <a href = "https://api.runddy.co.kr/oauth2/authorization/naver" target="blank"> API 서버 네이버 로그인 </a> <br>
+            <a href = "http://localhost:8080/oauth2/authorization/kakao" target="blank"> 로컬 서버 카카오 로그인 </a> <br>
+            <a href = "http://localhost:8080/oauth2/authorization/naver" target="blank"> 로컬 서버 네이버 로그인 </a>
             """)
         .version("1.0.0"); // API의 버전
-  }
-
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("swagger-ui.html")
-            .addResourceLocations("classpath:/META-INF/resources/");
-
-    registry.addResourceHandler("/webjars/**")
-            .addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
 }

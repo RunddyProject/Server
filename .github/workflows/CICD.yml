@@ -80,6 +80,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: (1) Checkout
+        uses: actions/checkout@v4
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -96,7 +99,7 @@ jobs:
       # Docker Build하고 DockerHub에 Push
       - name: Docker Build & Push to DockerHub
         run: |
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
 
   # -------------------------
@@ -106,9 +109,6 @@ jobs:
     name: CD - EC2 ▸ Deploy (SSH -> docker compose)
     needs: docker-build-and-push
     runs-on: ubuntu-latest
-
-    env:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     steps:
       # GitHub IP를 요청

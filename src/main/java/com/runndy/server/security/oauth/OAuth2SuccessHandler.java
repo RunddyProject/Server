@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -17,14 +18,17 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
   private final JwtTokenProvider jwt;
   private final TokenStore tokenStore;
 
   @Override
-  public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth) throws IOException {
+  public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res,
+      Authentication auth) throws IOException {
     UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
     String sid = "web-" + UUID.randomUUID();                // 디바이스/세션 식별자
@@ -48,10 +52,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-    // TODO: Client로 redirect
-    String redirect = UriComponentsBuilder.fromUriString("/login/success")
+    String redirect = UriComponentsBuilder.fromUriString(req.getRequestURL().toString())
+                                          .replacePath("/login/success")
                                           .build()
                                           .toUriString();
+
+    log.info("redirect: {}", redirect);
 
     getRedirectStrategy().sendRedirect(req, res, redirect);
   }

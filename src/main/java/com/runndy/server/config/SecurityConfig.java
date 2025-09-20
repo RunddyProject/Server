@@ -27,7 +27,7 @@ public class SecurityConfig {
       CustomOAuth2UserService oAuth2UserService,
       JwtAuthenticationFilter jwtFilter) throws Exception {
     http
-        .csrf(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
         .cors(Customizer.withDefaults())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth

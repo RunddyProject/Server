@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,15 @@ public class HealthCheckController implements HealthCheckApi {
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/auth")
   public ResponseEntity<SelectLoginUserResponseDto> healthCheckWithAuth(
+      @AuthenticationPrincipal LoginUserInfoDto loginUserInfoDto) {
+    SelectLoginUserResponseDto response = SelectLoginUserResponseDto.from(loginUserInfoDto);
+    return ResponseEntity.ok()
+                         .body(response);
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @PostMapping("/post")
+  public ResponseEntity<SelectLoginUserResponseDto> postHealthCheckWithAuth(
       @AuthenticationPrincipal LoginUserInfoDto loginUserInfoDto) {
     SelectLoginUserResponseDto response = SelectLoginUserResponseDto.from(loginUserInfoDto);
     return ResponseEntity.ok()

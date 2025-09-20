@@ -16,9 +16,9 @@ public class CorsConfig {
 
     configuration.setAllowedOrigins(List.of(
         "http://localhost:5173",
-        "http://localhost:8080",
         "https://runddy.co.kr",
-        "https://www.runddy.co.kr"
+        "https://www.runddy.co.kr",
+        "https://runddy.lovable.app/"
     ));
 
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));

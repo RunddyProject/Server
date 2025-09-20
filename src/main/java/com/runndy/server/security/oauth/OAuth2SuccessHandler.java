@@ -29,9 +29,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   // 허용된 클라이언트 origin 목록 (보안을 위해)
   private final Set<String> allowedOrigins = Set.of(
       "http://localhost:5173",
-      "http://localhost:8080",
       "https://runddy.co.kr",
-      "https://www.runddy.co.kr"
+      "https://www.runddy.co.kr",
+      "https://runddy.lovable.app/"
   );
 
   @Override

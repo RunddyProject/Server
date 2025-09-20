@@ -8,9 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -52,9 +53,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
     String redirect = UriComponentsBuilder.fromUriString(req.getRequestURL().toString())
-                                           .replacePath("/login/success")
-                                           .build()
-                                           .toUriString();
+                                          .replacePath("/login/success")
+                                          .build()
+                                          .toUriString();
+
+    log.debug("redirect: {}", redirect);
 
     getRedirectStrategy().sendRedirect(req, res, redirect);
   }
